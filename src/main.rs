@@ -8,9 +8,9 @@ use std::path::Path;
 use event::Event;
 
 fn main() {
-    const FILENAME: &str = "events.json";
     const MONTH_NAMES: [&str; 12] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+    let file_name = &format!("{}\\events.json", home::home_dir().unwrap().to_str().unwrap());
     let args: Vec<String> = env::args().collect();
 
     match args.get(1) {
@@ -29,8 +29,8 @@ fn main() {
 
                     let mut content = String::new();
                    
-                    if Path::new(FILENAME).exists() {
-                        content = match fs::read_to_string(FILENAME) {
+                    if Path::new(file_name).exists() {
+                        content = match fs::read_to_string(file_name) {
                             Ok(x) => x,
                             Err(_) => {
                                 println!("Failed reading file");
@@ -69,7 +69,7 @@ fn main() {
 
                     let string_json = serde_json::to_string(&events).unwrap();
 
-                    let mut file = match File::create(FILENAME) {
+                    let mut file = match File::create(file_name) {
                         Ok(x) => x,
                         Err(_) => {
                             println!("Failed creating file");
@@ -101,7 +101,7 @@ fn main() {
                         }
                     };
 
-                    let content = match fs::read_to_string(FILENAME) {
+                    let content = match fs::read_to_string(file_name) {
                         Ok(x) => x,
                         Err(_) => {
                             println!("Failed reading file");
@@ -123,7 +123,7 @@ fn main() {
 
                     let string_json = serde_json::to_string(&events).unwrap();
 
-                    let mut file = match File::create(FILENAME) {
+                    let mut file = match File::create(file_name) {
                         Ok(x) => x,
                         Err(_) => {
                             println!("Failed creating file");
@@ -134,13 +134,12 @@ fn main() {
                     file.write_all(string_json.as_bytes()).expect("Failed writing to file");
                 }
                 "clear" => {
-                    match File::create(FILENAME) {
-                        Ok(_) => (),
-                        Err(_) => println!("Failed creating file")
-                    };
+                    match fs::remove_file(file_name) {
+                        _ => ()
+                    }
                 }
                 "list" => {
-                    let content = match fs::read_to_string(FILENAME) {
+                    let content = match fs::read_to_string(file_name) {
                         Ok(x) => x,
                         Err(_) => {
                             println!("Failed reading file");

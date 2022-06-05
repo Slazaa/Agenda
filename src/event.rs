@@ -43,6 +43,14 @@ impl Event {
             .map(|x| x.unwrap())
             .collect();
 
+        if date_infos[0] > 12 {
+            return Err("Invalid month".to_owned());
+        }
+
+        if date_infos[1] > 31 {
+            return Err("Invalid day".to_owned());
+        }
+
         let mut event = Self {
             year,
             month: date_infos[0],
@@ -71,6 +79,24 @@ impl Event {
             let date_details: Vec<u8> = date_details.iter()
                 .map(|x| x.unwrap())
                 .collect();
+
+            if let Some(hour) = date_details.first() {
+                if *hour > 24 {
+                    return Err("Invalid hour".to_owned());
+                }
+            }
+
+            if let Some(minute) = date_details.get(1) {
+                if *minute > 60 {
+                    return Err("Invalid minute".to_owned());
+                }
+            }
+
+            if let Some(second) = date_details.get(2) {
+                if *second > 60 {
+                    return Err("Invalid second".to_owned());
+                }
+            }
             
             if let Some(hour) = date_details.get(0) {
                 event.hour = *hour;
