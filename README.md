@@ -2,7 +2,7 @@
 A crossplatform agenda written in Rust
 
 ## Examples
-Add an event the 23th of April 2023 at noon
+Add an event the 23th of April 2023 at noon\n
 Note that the numbers after the '-' are optional
 ```
 agenda add 2023/04/23-12:00:0 "There is an event!"
