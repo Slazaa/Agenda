@@ -4,6 +4,9 @@ use std::io::Write;
 use std::env;
 use std::fs::{self, File};
 use std::path::Path;
+use std::cmp::Ordering;
+
+use chrono::{Datelike, Local};
 
 use event::Event;
 
@@ -134,9 +137,7 @@ fn main() {
                     file.write_all(string_json.as_bytes()).expect("Failed writing to file");
                 }
                 "clear" => {
-                    match fs::remove_file(file_name) {
-                        _ => ()
-                    }
+                    fs::remove_file(file_name).unwrap();
                 }
                 "list" => {
                     let content = match fs::read_to_string(file_name) {
@@ -165,7 +166,28 @@ fn main() {
                             println!("\n{} = {} =", event.year, MONTH_NAMES[(event.month - 1) as usize]);
                         }
 
-                        println!("- [{}] ({}:{}.{}) - {}", event.day, event.hour, event.minute, event.second, event.message);
+                        let info_char;
+                        let date_now = Local::now();
+
+                        match event.year.cmp(&(date_now.year() as u16)) {
+                            Ordering::Equal => {
+                                match event.month.cmp(&(date_now.month() as u8)) {
+                                    Ordering::Equal => {
+                                        match event.day.cmp(&(date_now.day() as u8)) {
+                                            Ordering::Equal => info_char = '*',
+                                            Ordering::Less => info_char = '-',
+                                            Ordering::Greater => info_char = '+'
+                                        }
+                                    }
+                                    Ordering::Less => info_char = '-',
+                                    Ordering::Greater => info_char = '+'
+                                }
+                            }
+                            Ordering::Less => info_char = '-',
+                            Ordering::Greater => info_char = '+'
+                        }
+
+                        println!("{} [{}] ({}:{}.{}) - {}", info_char, event.day, event.hour, event.minute, event.second, event.message);
                     }
                 }
                 _ => println!("Unknown command '{}'", command)
