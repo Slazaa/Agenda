@@ -25,3 +25,9 @@ agenda list
 2024 = December =
 - [25] (0:0.0) - "Christmas!"
 ```
+
+## Libraries used
+* [chrono](https://github.com/chronotope/chrono)
+* [serde](https://github.com/serde-rs/serde)
+* [serde_json](https://github.com/serde-rs/json)
+* [home](https://github.com/brson/home)
